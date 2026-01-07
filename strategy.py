@@ -11,21 +11,21 @@ import os
 
 
 class AdaptiveMomentumReversion(Strategy):
-    # Strategy parameters - high Sharpe configuration
+    # Strategy parameters - balanced for good Sharpe/Sortino
     rsi_period = 14          # Standard RSI
     rsi_ob = 70              # Standard overbought
-    rsi_os = 30              # Standard oversold
+    rsi_os = 30              # Standard oversold  
     bb_period = 20           # Standard BB
     bb_std = 2.0             # Standard deviation
     atr_period = 14          # Standard ATR
     sma_fast = 10            # Fast MA
-    sma_slow = 30            # Slow MA
+    sma_slow = 30            # Slow MA for trend
     vol_period = 20          # Volatility window
     
-    # Risk management
+    # Risk management - optimized R:R
     risk_pct = 0.02          # Risk 2% per trade
-    sl_atr_mult = 2.0        # Stop loss: 2x ATR
-    tp_atr_mult = 4.0        # Take profit: 4x ATR (1:2 R:R)
+    sl_atr_mult = 1.7        # Tighter stop: 1.7x ATR
+    tp_atr_mult = 5.0        # Higher TP: 5x ATR (1:2.9 R:R)
     max_trades_per_day = 15  # Allow reasonable trades
     
     def init(self):
@@ -45,9 +45,18 @@ class AdaptiveMomentumReversion(Strategy):
         self.sma_f = self.I(SMA, p, self.sma_fast)
         self.sma_s = self.I(SMA, p, self.sma_slow)
         self.vol = self.I(self._volatility, p, self.vol_period)
-        self.macd_line, self.macd_signal, _ = self.I(
+        self.macd_line, self.macd_signal, self.macd_hist = self.I(
             self._macd, p, 12, 26, 9
         )
+        
+        # ADX for trend strength
+        self.adx = self.I(self._adx, h, l, c, 14)
+        
+        # Volume MA for confirmation
+        self.vol_ma = self.I(self._volume_ma, self.data.Volume, 20)
+        
+        # Longer term trend (50-period SMA)
+        self.sma_trend = self.I(SMA, p, 50)
         
         # Trade tracking
         self.daily_trades = 0
@@ -55,6 +64,9 @@ class AdaptiveMomentumReversion(Strategy):
         self.entry_price = None
         self.sl_price = None
         self.tp_price = None
+        self.trail_price = None
+        self.highest_since_entry = None
+        self.lowest_since_entry = None
     
     def _rsi(self, p, n):
         """Relative Strength Index"""
@@ -97,6 +109,38 @@ class AdaptiveMomentumReversion(Strategy):
         sig = macd.ewm(span=signal, adjust=False).mean()
         hist = macd - sig
         return macd.values, sig.values, hist.values
+    
+    def _adx(self, h, l, c, n):
+        """Average Directional Index for trend strength"""
+        high = pd.Series(h)
+        low = pd.Series(l)
+        close = pd.Series(c)
+        
+        # True Range
+        tr1 = high - low
+        tr2 = abs(high - close.shift())
+        tr3 = abs(low - close.shift())
+        tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
+        atr = tr.rolling(window=n).mean()
+        
+        # Directional Movement
+        up_move = high - high.shift()
+        down_move = low.shift() - low
+        
+        plus_dm = up_move.where((up_move > down_move) & (up_move > 0), 0)
+        minus_dm = down_move.where((down_move > up_move) & (down_move > 0), 0)
+        
+        plus_di = 100 * (plus_dm.rolling(window=n).mean() / atr)
+        minus_di = 100 * (minus_dm.rolling(window=n).mean() / atr)
+        
+        dx = 100 * abs(plus_di - minus_di) / (plus_di + minus_di)
+        adx = dx.rolling(window=n).mean()
+        
+        return adx.fillna(0).values
+    
+    def _volume_ma(self, v, n):
+        """Volume moving average"""
+        return pd.Series(v).rolling(window=n).mean().fillna(0).values
     
     def _calculate_position_size(self, entry_p, sl_p):
         """Dynamic position sizing based on risk percentage"""
@@ -179,16 +223,21 @@ class AdaptiveMomentumReversion(Strategy):
             return
         
         p = self.data.Close[-1]
+        h = self.data.High[-1]
+        l = self.data.Low[-1]
         atr = self.atr[-1]
         
         # Exit logic: Stop loss & Take profit
         if self.position:
             if self.position.is_long:
+                # Simple exit: hit SL or TP
                 if p <= self.sl_price or p >= self.tp_price:
                     self.position.close()
                     self.daily_trades += 1
                     return
+                    
             elif self.position.is_short:
+                # Simple exit: hit SL or TP
                 if p >= self.sl_price or p <= self.tp_price:
                     self.position.close()
                     self.daily_trades += 1
@@ -203,6 +252,7 @@ class AdaptiveMomentumReversion(Strategy):
                 self.entry_price = p
                 self.sl_price = p - (self.sl_atr_mult * atr)
                 self.tp_price = p + (self.tp_atr_mult * atr)
+                self.highest_since_entry = p
                 
                 # Calculate position size
                 size = self._calculate_position_size(self.entry_price, self.sl_price)
@@ -216,6 +266,7 @@ class AdaptiveMomentumReversion(Strategy):
                 self.entry_price = p
                 self.sl_price = p + (self.sl_atr_mult * atr)
                 self.tp_price = p - (self.tp_atr_mult * atr)
+                self.lowest_since_entry = p
                 
                 # Calculate position size
                 size = self._calculate_position_size(self.entry_price, self.sl_price)
