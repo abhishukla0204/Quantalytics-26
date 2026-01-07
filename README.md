@@ -1,5 +1,4 @@
-# 🏆 Quantalytics Trading Strategy - Prometeo 2026
-### IIT Jodhpur Technical Festival
+# Quantalytics Trading Strategy - Prometeo 2026
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Backtesting.py](https://img.shields.io/badge/Backtesting.py-0.3.3+-green.svg)](https://kernc.github.io/backtesting.py/)
@@ -11,7 +10,7 @@
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
+- [Overview](##overview)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
