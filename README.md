@@ -8,21 +8,6 @@
 
 ---
 
-## 📋 Table of Contents
-
-- [Overview](##overview)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Strategy Logic](#strategy-logic)
-- [Performance Metrics](#performance-metrics)
-- [Project Structure](#project-structure)
-- [Competition Compliance](#competition-compliance)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-
----
-
 ## 🎯 Overview
 
 This project implements a quantitative trading strategy for the **Quantalytics competition** at Prometeo 2026. The strategy combines:
@@ -42,28 +27,22 @@ This project implements a quantitative trading strategy for the **Quantalytics c
 
 ### Core Strategy Components
 
-✅ **Hybrid Signal Generation**
+**Hybrid Signal Generation**
 - RSI (14-period) for overbought/oversold detection
 - Bollinger Bands (20-period, 2 std) for statistical extremes
 - MACD (12, 26, 9) for momentum confirmation
 - SMA Crossover (10/30) for trend alignment
 
-✅ **Risk Management**
+**Risk Management**
 - Dynamic position sizing (2% risk per trade)
 - ATR-based stop-loss (2x ATR)
 - ATR-based take-profit (3x ATR)
 - Daily trade limit (max 100 trades/day)
 
-✅ **Cost Optimization**
+**Cost Optimization**
 - Commission: $2 or 0.002% (whichever is lower)
 - Slippage consideration
 - Minimal trading frequency to maximize profitability
-
-✅ **Code Quality**
-- Clean variable naming (`p`, `v`, `atr`, etc.)
-- Modular design for easy extension
-- Comprehensive documentation
-- Type hints and docstrings
 
 ---
 
@@ -77,9 +56,6 @@ This project implements a quantitative trading strategy for the **Quantalytics c
 
 ### Step 1: Clone the Repository
 
-```bash
-cd c:\Abhinav_Shukla\MyProjects\Prometeo
-```
 
 ### Step 2: Install TA-Lib (Windows)
 
@@ -123,47 +99,6 @@ Run the strategy on Silver data:
 ```bash
 python strategy.py data/XAGUSD_M1/DAT_MT_XAGUSD_M1_2024.csv
 ```
-
-### Expected Output
-
-```
-Loading data from: data/XAUUSD_M1/DAT_MT_XAUUSD_M1_2024.csv
-Data loaded: 355653 bars
-Period: 2024-01-01 18:00:00 to 2024-12-31 23:59:00
-
-Running backtest...
-
-============================================================
-PERFORMANCE METRICS
-============================================================
-Sharpe Ratio             : 1.85
-Sortino Ratio            : 2.34
-Max Drawdown             : -18.5%
-Win Rate                 : 52.3%
-Total Return             : 34.7%
-Total Trades             : 245
-Avg Trade                : 0.14%
-Max Trade Duration       : 3:45:00
-Avg Trade Duration       : 1:23:00
-Profit Factor            : 1.72
-Exposure Time            : 45.2%
-============================================================
-
-Generating performance plot...
-Saving results to: backtest_results_DAT_MT_XAUUSD_M1_2024.html
-```
-
-### Interactive Plots
-
-The script generates an interactive HTML plot with:
-- Equity curve
-- Drawdown chart
-- Trade markers (entry/exit points)
-- Indicator overlays (RSI, Bollinger Bands, MACD)
-
-Open the generated HTML file in your browser to explore the results.
-
----
 
 ## 🧠 Strategy Logic
 
@@ -270,24 +205,6 @@ Prometeo/
 - **`strategy.py`**: Complete backtesting implementation with `backtesting.py`
 - **`RESEARCH_REPORT.md`**: Comprehensive documentation of methodology, assumptions, and signal logic
 - **`requirements.txt`**: All necessary Python packages with versions
-
----
-
-## ✅ Competition Compliance
-
-### Quantalytics Requirements
-
-| Requirement | Implementation | Status |
-|-------------|----------------|--------|
-| **Framework** | backtesting.py | ✅ |
-| **Trade Frequency** | 10-50 trades/month | ✅ |
-| **Daily Limit** | < 100 trades/day | ✅ |
-| **Commission** | $2 or 0.002% (lower) | ✅ |
-| **Position Sizing** | Dynamic (ATR-based) | ✅ |
-| **Stop Loss** | 2 × ATR | ✅ |
-| **Take Profit** | 3 × ATR | ✅ |
-| **Variable Naming** | Minimal (p, v, atr) | ✅ |
-| **Output Metrics** | Sharpe, Sortino, DD, Win Rate | ✅ |
 
 ---
 
@@ -419,19 +336,6 @@ df = pd.read_csv('data/XAUUSD_M1/DAT_MT_XAUUSD_M1_2024.csv',
 
 ---
 
-## 🤝 Contributing
-
-### For Competition Participants
-
-If you want to extend this strategy:
-
-1. **Fork the repository**
-2. **Create a new branch** (`git checkout -b feature/my-enhancement`)
-3. **Implement your changes**
-4. **Test thoroughly** on both Gold and Silver datasets
-5. **Document your methodology** in `RESEARCH_REPORT.md`
-6. **Submit your results**
-
 ### Enhancement Ideas
 
 - [ ] Machine learning signal filtering
@@ -441,44 +345,3 @@ If you want to extend this strategy:
 - [ ] Monte Carlo simulation for risk assessment
 
 ---
-
-## 📄 License
-
-This project is submitted for the Quantalytics competition at Prometeo 2026, IIT Jodhpur.
-
-**For Educational Purposes Only**  
-This strategy is provided as-is for academic and competition use. Not financial advice.
-
----
-
-## 👤 Author
-
-**Quantalytics Team**  
-Prometeo 2026 - IIT Jodhpur
-
----
-
-## 🏅 Acknowledgments
-
-- **IIT Jodhpur** for organizing Prometeo 2026
-- **Backtesting.py** for the excellent backtesting framework
-- **TA-Lib** contributors for technical analysis tools
-- **pandas** and **numpy** communities for data processing libraries
-
----
-
-## 📞 Support
-
-For questions or issues related to the competition:
-
-- **Competition Portal:** [Prometeo Official Website]
-- **Technical Issues:** Open an issue in this repository
-- **Strategy Questions:** Refer to `RESEARCH_REPORT.md`
-
----
-
-**Good luck in the Quantalytics competition! 🚀📈**
-
----
-
-*Last Updated: January 7, 2026*
