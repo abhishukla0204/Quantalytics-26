@@ -73,21 +73,6 @@ python strategy.py data\XAGUSD_M1\DAT_MT_XAGUSD_M1_2024.csv
 
 ---
 
-## Performance Expectations
-
-**Gold (XAU/USD) - 2024 Data:**
-- Expected Trades: 200-300
-- Expected Sharpe Ratio: 1.5-2.0
-- Expected Max Drawdown: 15-25%
-- Expected Win Rate: 48-55%
-
-**Silver (XAG/USD) - 2024 Data:**
-- Expected Trades: 180-280
-- Expected Sharpe Ratio: 1.3-1.9
-- Expected Max Drawdown: 18-28%
-- Expected Win Rate: 46-54%
-
----
 
 ## Quick Commands Cheat Sheet
 
@@ -112,19 +97,3 @@ pip list | findstr "pandas numpy backtesting talib"
 ```
 
 ---
-
-## Project Checklist
-
-- [ ] Python 3.8+ installed
-- [ ] TA-Lib installed and working
-- [ ] All dependencies from requirements.txt installed
-- [ ] Test script runs without errors
-- [ ] Backtest on Gold completes successfully
-- [ ] Backtest on Silver completes successfully
-- [ ] Performance metrics displayed correctly
-- [ ] Interactive plot opens in browser
-- [ ] Read RESEARCH_REPORT.md for methodology
-
----
-
-**If everything works, you're ready for the competition! 🏆**
