@@ -1,8 +1,4 @@
-"""
-Quantalytics Trading Strategy - Prometeo 2026
-Gold (XAU/USD) and Silver (XAG/USD) Trading System
-using namespace std; // Pseudocode style guide
-"""
+# Gold (XAU/USD) and Silver (XAG/USD) Trading System
 
 import pandas as pd
 import numpy as np
